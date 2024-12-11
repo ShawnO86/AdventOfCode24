@@ -10,15 +10,9 @@ import java.util.Scanner;
 public class Day4 {
     private final File inputFile;
     private final char[][] board = new char[140][140];
-    private String word;
-
+    private final String word;
     //left, right, uo, down, up left, down left, up right, down right
-    private final List<int[]> directions_OLD = new ArrayList<>(List.of(
-            new int[]{0, -1}, new int[]{0, 1}, new int[]{-1, 0}, new int[]{1, 0}, new int[]{-1, -1}, new int[]{1, -1}, new int[]{-1, 1}, new int[]{1, 1}
-    ));
-
     private final int[][] directions = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
-
 
     public int found = 0;
 
@@ -43,7 +37,7 @@ public class Day4 {
     //return pos[rowNum,colIndex] if found or null if not
     public int[] findX(int rowNum, int startPos) {
         char[] row = board[rowNum];
-        char searchChar = 'X';
+        char searchChar = word.charAt(0);
         for (int i = startPos; i < row.length; i++) {
             if (row[i] == searchChar) {
                 return new int[]{rowNum, i};
@@ -54,32 +48,41 @@ public class Day4 {
 
     //Search for 'M' in each direction
     //return array of directions of M or null if none
-    public List<int[]> findM(int[]xPos){
+    public void findRemaining(int[]xPos){
         List<int[]> result = new ArrayList<>();
 
         for (int[] direction : directions) {
             //ensure word would not go out of bounds of board
-            if ((xPos[0] <=word.length()-1 && direction[0] == -1) ||
-                    (xPos[0] >= board[0].length - word.length() && direction[0] == 1) ||
-                    (xPos[1] <=word.length()-1 && direction[1] == -1) ||
-                    (xPos[1] >= board.length - word.length() && direction[1] == 1)) {
-                System.out.println("Check out of bounds... Skipping...");
+            if (xPos[0] + direction[0] * (word.length() - 1) < 0 ||
+                    xPos[0] + direction[0] * (word.length() - 1) >= board.length ||
+                    xPos[1] + direction[1] * (word.length() - 1) < 0 ||
+                    xPos[1] + direction[1] * (word.length() - 1) >= board[0].length) {
+                System.out.println("Word would go out of bounds. Skipping direction: " + Arrays.toString(direction));
                 continue;
             }
-
+            //initial pos to check
             int[] mCheck = {xPos[0] + direction[0], xPos[1] + direction[1]};
-            if (board[mCheck[0]][mCheck[1]] == 'M') {
-                result.add(direction);
-            } else {
-                System.out.println("No M at: " + Arrays.toString(direction));
+            //keep checking in direction for remaining chars - add direction to mCheck after each found char
+            for (int i = 1; i < word.length(); i++) {
+                char searchChar = word.charAt(i);
+                System.out.println("Char: " + searchChar);
+                if (board[mCheck[0]][mCheck[1]] == searchChar) {
+                    System.out.println(searchChar + " found at: " + Arrays.toString(direction));
+                    mCheck[0] += direction[0];
+                    mCheck[1] += direction[1];
+                } else {
+                    //break out of loop to start check on next direction
+                    System.out.println("No " + searchChar + " at: " + Arrays.toString(direction));
+                    break;
+                }
+                System.out.println("word loop i: " + i + " char " + searchChar);
+                if (i == word.length() - 1) {
+                    System.out.println("word found!");
+                    found += 1;
+                }
             }
-        }
 
-        if (result.isEmpty()) {
-            return null;
         }
-
-        return result;
     }
 
 }
