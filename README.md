@@ -6,4 +6,6 @@
 ### Day 2: &Star;&Star;
 ### Day 3: &Star;&Star;
 ### Day 4: &Star; -
-### Day 5: in progress
+### Day 5: - -
+### Day 6: &Star; -
+
