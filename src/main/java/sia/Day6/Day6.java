@@ -6,15 +6,14 @@ import java.util.*;
 
 public class Day6 {
     private final File inputFile;
-    public final char[][] board = new char[130][130];
-
     //up, right, down, left (x, y)
     private final List<int[]> directions = new ArrayList<>(List.of(new int[]{-1, 0}, new int[]{0, 1}, new int[]{1, 0}, new int[]{0, -1}));
     private int[] currDirection = directions.getFirst();
     private final int[] currPos;
     private boolean isInArea = true;
 
-    public Set<List<Integer>> visitedPositions = new HashSet<List<Integer>>();
+    public char[][] board = new char[130][130];
+    public Set<List<Integer>> visitedPositions = new HashSet<>();
 
     public Day6(File inputFile) throws FileNotFoundException {
         this.inputFile = inputFile;
@@ -50,24 +49,21 @@ public class Day6 {
     private void moveForward() {
         int newX = currPos[0] + currDirection[0];
         int newY = currPos[1] + currDirection[1];
-        System.out.println(visitedPositions);
+        System.out.println("Current Pos: " + currPos[0] + ", " + currPos[1] + " next pos: " + newX + ", " + newY);
         //in area bounds check
         if (newX < 0 || newX >= board.length || newY < 0 || newY >= board[currPos[0]].length) {
             //guard is leaving area
             isInArea = false;
             return;
         }
-        System.out.println("Current pos: " + currPos[0] + ", " + currPos[1] + " new pos: " + newX + ", " + newY);
-        System.out.println("Char: " + board[newX][newY]);
         //check for '#' to signify an obstruction then setNextDirection
         if (board[newX][newY] == '#') {
             System.out.println("Turning . . . ");
             setNextDirection();
             return;
         }
-
-        //If no direction change - move to new position and increment visited position
-        //Visited positions are not counted twice - using Set.
+        //If no direction change - move to new position and add visited position
+        //Visited positions are not counted twice - because using Set.
         visitedPositions.add(List.of(newX, newY));
         currPos[0] = newX;
         currPos[1] = newY;
@@ -89,5 +85,7 @@ public class Day6 {
         while (isInArea) {
             moveForward();
         }
+        System.out.println("Patrol finished");
+        System.out.println("Visited " + visitedPositions.size() + " unique positions");
     }
 }
